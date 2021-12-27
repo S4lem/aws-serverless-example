@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  TodoApp Python Back-end.
+Globals:
+  Function:
+    Timeout: 5
+    Tags:
+      project: TodoApp
+    Environment:
+      Variables:
+        TABLE_NAME_TODOS: todos
+
+Resources:
+  HelpersLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: HelpersLayer
+      Description: "Helpers dependencies : Database connexion, Data validation or whatever that will be used by many lambdas."
+      ContentUri: layers/helpers
+      CompatibleRuntimes:
+        - python3.8
+
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: TodosApi
+      StageName: v1
+
+  TodosFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: TodosHandler
+      CodeUri: lambdas/todos
+      Handler: todos_function.lambda_handler
+      Runtime: python3.8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: todos
+      Events:
+        CreateTodos:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: post
+            RestApiId: !Ref ApiGatewayApi
+        GetTodoList:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: get
+            RestApiId: !Ref ApiGatewayApi
+        DeleteTodo:
+          Type: Api
+          Properties:
+            Path: /todos/{todoId}
+            Method: delete
+            RestApiId: !Ref ApiGatewayApi
+      Layers:
+      - !Ref HelpersLayer
+
+  TodosTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties: 
+      TableName: todos
+      PrimaryKey: 
+        Name: id 
+        Type: String 
