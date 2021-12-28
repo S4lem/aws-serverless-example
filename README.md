@@ -1,14 +1,13 @@
-# TodosApp Back-end
+# Todo-list Back-end Application with SAM
 
-This project contains source code for a serverless Todos application using Python 3.8.
+This project contains source code for a serverless Todos application using Python 3.8 and SAM (Serverless Application Model).
 
-You will be able to add, remove and list the Todos list.
-You can deploy the app with the SAM CLI. It includes the following files and folders.
+You will be able to add, remove and list the Todo-list.
 
+It includes the following files and folders.
 - lambdas - Code for the application's Lambda functions.
 - layers - Code to avoid code duplication accross lambda functions.
-- tests - Unit tests for the application code. 
-- postman_collection.json - 
+- postman_collection.json - pre-made requests
 - Makefile : command shortcuts
 - template.yaml - A template that defines the application's AWS resources.
 
@@ -28,6 +27,8 @@ The application uses several AWS resources:
 * Run `aws configure` and set your region, AKI and SAK
 
 
+## Run locally
+
 To build and deploy your application for the first time, run the following in your shell:
 
 ```bash
@@ -42,7 +43,7 @@ Then, run the following command to start the API locally on port 3000.
 make start-api
 ```
 
-You're now free to test locally. You can also import the provided postman collection.
+You're now free to test locally. You can also import the provided postman collection to Postman.
 
 
 
