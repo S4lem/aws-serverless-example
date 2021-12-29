@@ -29,7 +29,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"description\": \"Feed the dog.\"\n}",
+					"raw": "{\n    \"label\": \"Feed the dog.\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

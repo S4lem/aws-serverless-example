@@ -1,5 +1,6 @@
 import json, os
 from db_fetcher import DatabaseManager
+from http_response import HttpResponse
 
 TABLE_NAME_TODOS = os.environ["TABLE_NAME_TODOS"]
 
@@ -33,11 +34,7 @@ def lambda_handler(event, context):
     if method == 'GET' and endpoint == "/todos":
         # Get a list todos
         todos = DatabaseManager.get_list_item_db(table_name=TABLE_NAME_TODOS)
-
-        return {
-        'statusCode': 200,
-        'body': json.dumps(todos)
-    }
+        return HttpResponse.success(todos)
 
     if method == 'POST' and endpoint == "/todos":
         # Add a new todo
@@ -45,22 +42,13 @@ def lambda_handler(event, context):
             payload = json.loads(payload)
         except Exception as e:
             print(e)
-            return {
-                'statusCode': 401,
-                'body': json.dumps({'message': 'Bad request.'})
-            }
-        if not payload.get('description'):
-            return {
-                'statusCode': 401,
-                'body': json.dumps({'message': 'Bad request.'})
-            }
+            return HttpResponse.bad_request()
+
+        if not payload.get('label'):
+            return HttpResponse.bad_request()
         
         new_item_id = DatabaseManager.add_item_db(table_name=TABLE_NAME_TODOS, item=payload)
-
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'message': f'Todo with id {new_item_id} added'})
-        }
+        return HttpResponse.success(message=f'Todo with id {new_item_id} added')
 
     if method == 'DELETE' and endpoint == "/todos/{todoId}":
         # remove a todo
@@ -68,15 +56,8 @@ def lambda_handler(event, context):
         try:
             DatabaseManager.delete_item_db(table_name=TABLE_NAME_TODOS, id_item=todo_id)
         except:
-            return {
-                'statusCode': 500,
-                'body': json.dumps({'message': 'Unexpected error.'})
-            }
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'message': f'Todo with id {todo_id} deleted'})
-        }
-    return {
-        'statusCode': 404,
-        'body': json.dumps({'message': 'Not found.'})
-    }
+            return HttpResponse.internal_error()
+
+        return HttpResponse.success(message=f'Todo with id {todo_id} deleted')
+
+    return HttpResponse.not_found(message='Not found')

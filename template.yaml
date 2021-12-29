@@ -26,6 +26,10 @@ Resources:
     Properties:
       Name: TodosApi
       StageName: v1
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'X-Api-Key,Authorization,X-Amz-Date,Content-Length,Host,Accept,Content-Type'"
+        AllowOrigin: "'*'"
 
   TodosFunction:
     Type: AWS::Serverless::Function 
